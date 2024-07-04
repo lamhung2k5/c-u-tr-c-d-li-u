@@ -79,12 +79,64 @@ void xuat(list l){
 	}
 }
 
+//ham xoa danh sach lien ket
+void FreeAll(list &l){
+	while(l.head != NULL){
+		node *temp = l.head;
+		l.head = l.head -> next;
+		free(temp);
+	}
+}
+
+//ham ghi file 
+void ghifile(list l){
+	//tao file
+	FILE *file;
+	file = fopen("tamgiac.txt","w");
+	if(file == NULL){
+		printf("\nkhong the mo file");
+		exit(1);
+	}
+	//ghi file
+	for(node *k = l.head; k != NULL; k = k -> next){
+		fprintf(file,"%f,%f,%f,%f,%f\n",k -> data.canh1, k -> data.canh2, k -> data.canh3, k -> data.ChuVi, k -> data.DienTich);
+	}	
+	//dong file
+	fclose(file);
+}
+
+//ham ghi file 
+void docfile(list &l){
+	//tao file
+	FILE *file;
+	file = fopen("tamgiac.txt","r");
+	if(file == NULL){
+		printf("\nkhong the mo file");
+		exit(1);
+	}
+	//doc file
+	
+	while(!feof(file)){
+		TamGiac x;
+		fscanf(file,"%f,%f,%f,%f,%f\n",&x.canh1,&x.canh2,&x.canh3,&x.ChuVi,&x.DienTich);
+		node *p = KhoiTaoNode(x);
+		ThemVaoCuoi(l,p);
+
+	}
+		
+	//dong file
+	fclose(file);
+}
+
 void menu(list &l){
 	while(true){
 		fflush(stdin);
 		system("cls");
 		printf("1. nhap va kiem tra.\n");
 		printf("2. xuat thong tin tam giac.\n");
+		printf("3. xoa toan bo danh sach.\n");
+		printf("4. luu danh sach.\n");
+		printf("5. mo danh sach.\n");
 		printf("0. thoat.\n");
 		printf("\n\n\t\tAN PHIM CHON: ");
 		int chon;
@@ -100,7 +152,7 @@ void menu(list &l){
 				
 				nhap(x);
 				
-				if((x.canh1 + x.canh2 > x.canh3) && (x.canh2 + x.canh3 > x.canh1) && (x.canh1 + x.canh3 > x.canh2)){
+				if((x.canh1 >= 0 && x.canh2 >= 0 && x.canh3 >= 0)&&(x.canh1 + x.canh2 > x.canh3) && (x.canh2 + x.canh3 > x.canh1) && (x.canh1 + x.canh3 > x.canh2)){
 					printf("\nco the tao thanh tam giac");
 					node *p = KhoiTaoNode(x);
 					ThemVaoCuoi(l,p);
@@ -117,9 +169,48 @@ void menu(list &l){
 				fflush(stdin);
 				system("cls");
 				
-				printf("\t\t\tTHONG SO TAM GIAC\n\n\n");
-				printf("|stt| canh 1 | canh 2 | canh 3 | chu vi | dien tich |");
-				xuat(l);
+				if(l.head == NULL){
+					printf("chua co dư lieu.\n");
+				}else{
+					printf("\t\t\tTHONG SO TAM GIAC\n\n\n");
+					printf("|stt| canh 1 | canh 2 | canh 3 | chu vi | dien tich |");
+					xuat(l);
+				}
+				
+				printf("\nan phim bat ki de tiep tuc!");
+				getch();
+				break;
+			}
+			case 3:
+			{
+				fflush(stdin);
+				system("cls");
+				
+				FreeAll(l);
+				printf("danh sach da duoc luu");
+				
+				printf("\nan phim bat ki de tiep tuc!");
+				getch();
+				break;
+			}
+			case 4:
+			{
+				fflush(stdin);
+				system("cls");
+				
+				ghifile(l);
+				
+				printf("\nan phim bat ki de tiep tuc!");
+				getch();
+				break;
+			}
+			case 5:
+			{
+				fflush(stdin);
+				system("cls");
+				
+				docfile(l);	
+				
 				
 				printf("\nan phim bat ki de tiep tuc!");
 				getch();
@@ -144,3 +235,6 @@ int main(){
 	menu(l);
 	return 0;
 }
+
+
+//fix loi hien thi lai sau khi doc danh sach
