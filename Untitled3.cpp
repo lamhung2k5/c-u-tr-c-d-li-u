@@ -11,7 +11,117 @@ typedef struct node
 typedef struct stack
 {
 	int top;
-	node list[N];
+	node list[N];#include <stdio.h>
+#include <conio.h>
+#include <stdlib.h>
+
+struct node{
+	int data;
+	struct node *left;
+	struct node *right;
+};
+
+typedef struct node node;
+typedef node* tree;
+
+void khoiTao(tree &t){
+	t = NULL;
+}
+
+void themNodeVaoCay(tree &t, int x){
+	if(t == NULL){
+		node *p = (node*)malloc(sizeof(node));
+		p -> data = x;
+		p -> left = NULL;
+		p -> right = NULL;
+		t = p;
+	}
+	else{
+		if(x < t -> data){
+			themNodeVaoCay(t -> left,x);
+		}else if(x > t -> data){
+			themNodeVaoCay(t -> right,x);
+		}
+	}
+}
+
+void duyetNLR(tree t){
+	if(t != NULL){
+		printf("\t%d", t -> data);
+		duyetNLR(t -> left);
+		duyetNLR(t -> right);
+	}
+}
+
+void duyetLNR(tree t){
+	if(t != NULL){
+		duyetLNR(t -> left);
+		printf("\t%d",t -> data);
+		duyetLNR(t -> right);
+	}
+}
+
+void menu(tree &t){
+	while(true){
+		fflush(stdin);
+		system("cls");
+		
+		printf("1. them node vao cay.\n");
+		printf("2. xuat node.\n");
+		printf("0. thoat.\n");
+		
+		printf("\n\n\t\tAN PHIM CHON: ");
+		int chon;
+		scanf("%d",&chon);
+		
+		switch(chon){
+			case 1:
+			{
+				fflush(stdin);
+				system("cls");
+				
+				//them node vao cay
+				int x;
+				printf("nhap node x: ");
+				scanf("%d",&x);
+				themNodeVaoCay(t,x);
+				
+				printf("\nan phim bat ki de tiep tuc!");
+				getch();
+				break;
+			}
+			case 2:
+			{
+				fflush(stdin);
+				system("cls");
+				
+				duyetLNR(t);
+				
+				printf("\nan phim bat ki de tiep tuc!");
+				getch();
+				break;
+			}
+			case 0:
+				exit(1);
+			default:
+			{
+				fflush(stdin);
+				system("cls");
+
+				printf("\nkhong co chuc nang nay. an phim bat ki de tiep tuc!");
+				getch();
+				break;
+			}
+		}
+	}
+}
+
+int main(){
+	tree t;
+	khoiTao(t);
+	menu(t);
+	return 0;
+}
 }stack;
 void khoitao(stack &s)
 {
