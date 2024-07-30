@@ -1,22 +1,20 @@
 #include <stdio.h>
 #include <conio.h>
 #include <stdlib.h>
-#include <math.h>
+#include <string.h>
 
-//dinh nghia tam giac
-struct TamGiac{
-	float canh1;
-	float canh2;
-	float canh3;
-	float ChuVi;
-	float DienTich;
+struct khachHang{
+	int maSo;
+	char hoTen[50];
+	char phai[5];
+	int namSinh;
+	int tien;
 };
 
-typedef struct TamGiac TamGiac;
+typedef struct khachHang khachHang;
 
-//cau truc danh sach lien ket
 struct node{
-	TamGiac data;
+	khachHang data;
 	struct node *next;
 };
 
@@ -29,15 +27,15 @@ struct list{
 
 typedef struct list list;
 
-void KhoiTao(list &l){
+void khoiTao(list &l) {
 	l.head = NULL;
 	l.tail = NULL;
 }
 
-node *KhoiTaoNode(TamGiac x){
+node *khoiTaoNode(khachHang &x) {
 	node *p = (node*)malloc(sizeof(node));
-	if(p ==NULL){
-		printf("\nloi khoi tao");
+	if(p == NULL){
+		printf("khong the khoi tao.");
 		return NULL;
 	}
 	p -> data = x;
@@ -45,8 +43,8 @@ node *KhoiTaoNode(TamGiac x){
 	return p;
 }
 
-void ThemVaoCuoi(list &l, node *p){
-	if(l.head == NULL){
+void themVaoCuoi(list &l, node *p) {
+	if(l.head == NULL) {
 		l.head = l.tail = p;
 	}else{
 		l.tail -> next = p;
@@ -54,113 +52,73 @@ void ThemVaoCuoi(list &l, node *p){
 	}
 }
 
-//ham de nhap thong tin cac tam giac
-void nhap(TamGiac &x){
+void nhap(khachHang &x) {
 	fflush(stdin);
-	printf("\nnhap canh thu 1: ");
-	scanf("%f",&x.canh1);
+	printf("\nnhap ma so: ");
+	scanf("%d",&x.maSo);
 	fflush(stdin);
-	printf("\nnhap canh thu 2: ");
-	scanf("%f",&x.canh2);
+	printf("\nnhap ho ten: ");
+	gets(x.hoTen);
 	fflush(stdin);
-	printf("\nnhap canh thu 3: ");
-	scanf("%f",&x.canh3);
-	
-	float p = (x.canh1 + x.canh2 + x.canh3)/2;
-	x.ChuVi = 2*p;
-	x.DienTich = sqrt(p*(p-x.canh1)*(p-x.canh2)*(p-x.canh3));
+	printf("\nnhap phai: ");
+	gets(x.phai);
+	fflush(stdin);
+	printf("\nnhap nam sinh: ");
+	scanf("%d",&x.namSinh);
+	fflush(stdin);
+	printf("\nnhap tien: ");
+	scanf("%d",&x.tien);
 }
 
-void xuat(list l){
-	int i = 1; 
+void in(list l){
+	int i = 1;
+	for(node *k = l.head; k != NULL; k = k -> next) {
+		if(strcmp(k -> data.phai,"nu") == 0 && k -> data.namSinh < 1990){
+			printf("khach hang %d:", i++);
+			printf("\nma so: %d",k -> data.maSo);
+			printf("\nho ten: %s",k -> data.hoTen);
+			printf("\nphai: %s",k -> data.phai);
+			printf("\nnam sinh: %d",k -> data.namSinh);
+			printf("\nso tien: %d\n\n",k -> data.tien);
+		}
+	}
+}
+
+void dem(list l){
+	int i = 0;
 	for(node *k = l.head; k != NULL; k = k -> next){
-		printf("\n|%3d|%8.2f|%8.2f|%8.2f|%8.2f|%11.2f|",i, k -> data.canh1, k -> data.canh2, k -> data.canh3, k -> data.ChuVi, k -> data.DienTich);
-		i++;
+		if(k -> data.tien != 0){
+			i++;
+		}
 	}
-}
-
-//ham xoa danh sach lien ket
-void FreeAll(list &l){
-	while(l.head != NULL){
-		node *temp = l.head;
-		l.head = l.head -> next;
-		free(temp);
-	}
-}
-
-//ham ghi file 
-void ghifile(list l){
-	//tao file
-	FILE *file;
-	file = fopen("tamgiac.txt","w");
-	if(file == NULL){
-		printf("\nkhong the mo file");
-		exit(1);
-	}
-	//ghi file
-	for(node *k = l.head; k != NULL; k = k -> next){
-		fprintf(file,"%f,%f,%f,%f,%f\n",k -> data.canh1, k -> data.canh2, k -> data.canh3, k -> data.ChuVi, k -> data.DienTich);
-	}	
-	//dong file
-	fclose(file);
-}
-
-//ham ghi file 
-void docfile(list &l){
-	//tao file
-	FILE *file;
-	file = fopen("tamgiac.txt","r");
-	if(file == NULL){
-		printf("\nkhong the mo file");
-		exit(1);
-	}
-	//doc file
-	
-	while(!feof(file)){
-		TamGiac x;
-		fscanf(file,"%f,%f,%f,%f,%f\n",&x.canh1,&x.canh2,&x.canh3,&x.ChuVi,&x.DienTich);
-		node *p = KhoiTaoNode(x);
-		ThemVaoCuoi(l,p);
-
-	}
-		
-	//dong file
-	fclose(file);
+	printf("co %d khach hang.", i);
 }
 
 void menu(list &l){
 	while(true){
 		fflush(stdin);
 		system("cls");
-		printf("1. nhap va kiem tra.\n");
-		printf("2. xuat thong tin tam giac.\n");
-		printf("3. xoa toan bo danh sach.\n");
-		printf("4. luu danh sach.\n");
-		printf("5. mo danh sach.\n");
-		printf("0. thoat.\n");
-		printf("\n\n\t\tAN PHIM CHON: ");
-		int chon;
-		scanf("%d",&chon);
 		
-		switch(chon){
+		printf("1.nhap thong tin.\n");
+		printf("2.xuat khach hang nu va nam sinh nho hon 1990.\n");
+		printf("3.dem so luong khach hang co so tien khac.\n");
+		printf("0.thoat.\n");
+		
+		int chon;
+		printf("\n\n\t\tAN PHIM CHON: ");
+		scanf("%d",&chon);
+		switch(chon) {
 			case 1:
 			{
 				fflush(stdin);
 				system("cls");
-				
-				TamGiac x;
-				
+
+				khachHang x;
 				nhap(x);
-				
-				if((x.canh1 >= 0 && x.canh2 >= 0 && x.canh3 >= 0)&&(x.canh1 + x.canh2 > x.canh3) && (x.canh2 + x.canh3 > x.canh1) && (x.canh1 + x.canh3 > x.canh2)){
-					printf("\nco the tao thanh tam giac");
-					node *p = KhoiTaoNode(x);
-					ThemVaoCuoi(l,p);
-				}else{
-					printf("\nkhong the tao thanh tam giac!");
-				}
-				
-				printf("\nan phim bat ki de tiep tuc!");
+				node *p = khoiTaoNode(x);
+				themVaoCuoi(l,p);
+					
+				printf("\nan phim bat ki.");
 				getch();
 				break;
 			}
@@ -169,15 +127,9 @@ void menu(list &l){
 				fflush(stdin);
 				system("cls");
 				
-				if(l.head == NULL){
-					printf("chua co dư lieu.\n");
-				}else{
-					printf("\t\t\tTHONG SO TAM GIAC\n\n\n");
-					printf("|stt| canh 1 | canh 2 | canh 3 | chu vi | dien tich |");
-					xuat(l);
-				}
-				
-				printf("\nan phim bat ki de tiep tuc!");
+				in(l);
+					
+				printf("\nan phim bat ki.");
 				getch();
 				break;
 			}
@@ -186,55 +138,32 @@ void menu(list &l){
 				fflush(stdin);
 				system("cls");
 				
-				FreeAll(l);
-				printf("danh sach da duoc luu");
-				
-				printf("\nan phim bat ki de tiep tuc!");
-				getch();
-				break;
-			}
-			case 4:
-			{
-				fflush(stdin);
-				system("cls");
-				
-				ghifile(l);
-				
-				printf("\nan phim bat ki de tiep tuc!");
-				getch();
-				break;
-			}
-			case 5:
-			{
-				fflush(stdin);
-				system("cls");
-				
-				docfile(l);	
-				
-				
-				printf("\nan phim bat ki de tiep tuc!");
+				dem(l);
+					
+				printf("\nan phim bat ki.");
 				getch();
 				break;
 			}
 			case 0:
 				exit(1);
 			default:
+			{
 				fflush(stdin);
 				system("cls");
 				
-				printf("\nkhong co chuc nang nay. an phim bat ki de tiep tuc!");
+				
+				
+				printf("\nkhong co chuc nang nay. an phim bat ki.");
 				getch();
 				break;
+			}
 		}
 	}
 }
 
-int main(){
+int main() {
 	list l;
-	KhoiTao(l);
+	khoiTao(l);
 	menu(l);
 	return 0;
 }
-
-
-//fix loi hien thi lai sau khi doc danh sach
